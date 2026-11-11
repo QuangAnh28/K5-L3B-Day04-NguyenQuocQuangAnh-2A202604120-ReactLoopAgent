@@ -1,6 +1,6 @@
 # Ghi chú phân tích · Day 04
 
-Họ và tên: NguyenQuocQuangAnh (theo tên repo)
+Họ và tên: Nguyễn Quốc Quang Anh
 MSSV: 2A202604120
 
 ## 1. Case được chọn
