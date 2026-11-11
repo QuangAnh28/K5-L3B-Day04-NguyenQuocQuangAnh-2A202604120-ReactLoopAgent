@@ -65,7 +65,7 @@ Chọn cấu hình khác nếu cần:
 | `openrouter` | `OPENROUTER_API_KEY` | Model ID đầy đủ trên OpenRouter, thường có dạng `provider/model`. |
 | `opencode-go` | `OPENCODE_GO_API_KEY` | Ví dụ: `deepseek-v4.1-flash`; cần key và quyền truy cập OpenCode Go. |
 
-Ví dụ chuyển sang Gemini: `export PROVIDER=gemini`, đặt `GEMINI_API_KEY` và `MODEL` phù hợp. Chọn một provider; không cần tất cả key. File `.env.example` chỉ là mẫu: chương trình **không tự đọc `.env`**. Có thể chạy `cp .env.example .env`, điền key rồi chạy `source .env` trong mỗi terminal mới. Trên Windows, dùng Git Bash để chạy đúng các lệnh này, hoặc thay `python3` bằng `python` và đặt biến bằng `$env:TEN_BIEN='gia_tri'` trong PowerShell. Không commit key hay trace chứa dữ liệu nhạy cảm.
+Ví dụ chuyển sang Gemini: `export PROVIDER=gemini`, đặt `GEMINI_API_KEY` và `MODEL` phù hợp. Chọn một provider; không cần tất cả key. Chương trình tự đọc `.env` ở thư mục repo; biến môi trường đã đặt được ưu tiên. Sao chép `.env.example` thành `.env`, đặt provider/model/key phù hợp. Không cần package ngoài standard library. Trong PowerShell có thể dùng `$env:PYTHONUTF8="1"` để hiển thị tiếng Việt. Không commit key hay trace chứa dữ liệu nhạy cảm.
 
 Ví dụ dùng OpenCode Go (đặt key trong terminal hoặc cách quản lý secret của bạn):
 
@@ -117,3 +117,7 @@ Trong bài lab, *agent loop* là vòng LLM → tool → kết quả. Khi dùng c
 | Thiết kế môi trường | [OpenAI: Harness engineering](https://openai.com/index/harness-engineering/) | Vai trò của tests, feedback và môi trường khi giao công việc cho coding agent. |
 
 Nếu thử workflow tự động, hãy đặt giới hạn lượt chạy hoặc chi phí, có điều kiện dừng và tự kiểm tra kết quả. Tests pass là bằng chứng hữu ích, nhưng vẫn cần xem code và đối chiếu yêu cầu. Đọc kỹ quyền và hướng dẫn của từng công cụ trước khi cài hoặc chạy plugin/hook.
+
+## Bản nộp
+
+Ghi chú và so sánh trước/sau nằm trong [NOTES.md](NOTES.md). Giữ `investigation.py` và `env_config.py` cùng `agent.py` vì đây là các module chương trình sử dụng. Repo chỉ giữ ba file eval nộp bài, không kèm snapshot/log các lượt thử.

@@ -4,6 +4,9 @@ import os
 import urllib.error
 import urllib.request
 import uuid
+from env_config import load_env
+
+load_env()
 
 CONFIG = {
     'openai': ('OPENAI_API_KEY', 'https://api.openai.com/v1/chat/completions'),
@@ -45,12 +48,18 @@ class Provider:
         if not self.key:
             raise ValueError(f'Thiếu {key_name}; xem README.md.')
 
-    def complete(self, messages, schemas):
+    def complete_final(self, messages, schemas):
+        """Giữ schema/lịch sử nhưng không mở thêm tools ở lượt cuối."""
+        return self.complete(messages, schemas, tool_choice='none')
+
+    def complete(self, messages, schemas, tool_choice=None):
         if self.name == 'anthropic':
-            return self._anthropic(messages, schemas)
+            return self._anthropic(messages, schemas, tool_choice=tool_choice)
         payload = {'model': self.model, 'messages': messages}
         if schemas:
             payload['tools'] = schemas
+        if tool_choice is not None:
+            payload['tool_choice'] = tool_choice
         headers = {'Authorization': f'Bearer {self.key}'}
         if self.name == 'opencode-go':
             headers.update({'User-Agent': 'StatusAgentLab/1.0', 'x-opencode-session': self.session_id})
@@ -60,7 +69,7 @@ class Provider:
         calls = [{'id': c['id'], 'name': c['function']['name'], 'arguments': c['function']['arguments']} for c in message.get('tool_calls', [])]
         return {'message': message, 'calls': calls, 'finish': choice.get('finish_reason'), 'usage': data.get('usage', {})}
 
-    def _anthropic(self, messages, schemas):
+    def _anthropic(self, messages, schemas, tool_choice=None):
         system = '\n'.join(m['content'] for m in messages if m['role'] == 'system')
         native = []
         for m in messages:
@@ -85,6 +94,8 @@ class Provider:
         payload = {'model': self.model, 'max_tokens': 1024, 'system': system, 'messages': native}
         if tools:
             payload['tools'] = tools
+        if tool_choice is not None:
+            payload['tool_choice'] = {'type': tool_choice}
         data = post_json(self.url, {'x-api-key': self.key, 'anthropic-version': '2023-06-01'}, payload)
         blocks = data['content']
         calls = [{'id': b['id'], 'name': b['name'], 'arguments': json.dumps(b['input'], ensure_ascii=False)} for b in blocks if b['type'] == 'tool_use']
